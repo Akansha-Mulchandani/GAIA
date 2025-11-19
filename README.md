@@ -10,7 +10,7 @@ An ambitious reference implementation for **"Planetary‑Scale Biodiversity Moni
 
 ## 1. Overview
 
-This project is designed as a **hackathon‑ready solution blueprint** for the Ecological Systems challenge:
+This project is designed as a **ready solution blueprint** for the Ecological Systems challenge:
 
 > *"Build a system ingesting data from satellites, drones, camera traps, acoustic sensors, eDNA samplers, citizen scientists, and scientific literature to create a living model of Earth's biodiversity. Detect species automatically, track populations, predict ecosystem collapse, and recommend interventions."*
 
