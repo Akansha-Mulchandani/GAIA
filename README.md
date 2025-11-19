@@ -16,9 +16,14 @@ This project is designed as a **ready solution blueprint** for the Ecological Sy
 
 GAIA implements a focused but realistic **vertical slice** of that vision around butterflies and moths, showing how you would:
 
-- Cluster large image collections into **species‑level groups** as the basis for population tracking.
+- Cluster large image collections into **species‑level groups** as the basis for population and anomaly tracking.
 - Classify new observations using **state‑of‑the‑art vision models (Google Gemini)** with rich, human‑readable explanations.
 - Persist new samples and corrections into an append‑only dataset and immediately surface them in a **Species Discovery** UI for experts.
+- Orchestrate data across an **edge network** of nodes that can represent camera traps, drones, or local gateways.
+- Visualize ecosystem state on an interactive **spatial map** with overlays for observations and risk.
+- Run **collapse prediction** analytics to estimate early‑warning signals for ecosystem instability.
+- Explore a **digital twin** view of the system state, wired to streaming data and simulations.
+- Test management actions in an **intervention simulator** (e.g., habitat restoration, pesticide reduction) before deployment.
 
 The same architecture can be scaled up to multiple sensor modalities (satellite tiles, drone RGB, acoustic spectrograms, eDNA barcodes) and other taxa.
 
