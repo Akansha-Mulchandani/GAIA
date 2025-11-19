@@ -58,6 +58,22 @@ Everything runs locally via Docker, so you can reproduce the full experience wit
   - Upserts (user uploads): `data/temp_extract/train` – new or incremented species.
   - Keras EfficientNet model: `data/butterflies/efficientnetb0_butterfly_model.h5`.
 
+#### 2.2 Butterfly dataset (Kaggle / iNaturalist)
+
+The base butterfly dataset in `data/butterflies/train` was built from the **butterfly section of an iNaturalist dataset downloaded from Kaggle**.
+
+To reproduce a similar layout locally:
+
+1. Download the iNaturalist Lepidoptera dataset from Kaggle (or an equivalent butterfly‑only subset).
+2. Unzip it somewhere on disk.
+3. From the GAIA project root, copy or move the class folders so that you end up with:
+
+   ```bash
+   data/butterflies/train/<SPECIES_NAME>/*.jpg
+   ```
+
+Each species should correspond to a folder under `train/` containing its images. GAIA will automatically scan these folders to build clusters.
+
 - **Infrastructure (Docker)**
   - Defined in `docker-compose.yml`:
     - `postgres` – main relational DB.
