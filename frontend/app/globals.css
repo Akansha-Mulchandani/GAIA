@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next { height: 100%; }
+body { @apply text-slate-100; }
+.app-bg {
+  @apply min-h-screen bg-[radial-gradient(1000px_600px_at_-10%_-10%,#0EA5E9_0%,transparent_60%),radial-gradient(800px_500px_at_110%_10%,#10B981_0%,transparent_55%),linear-gradient(180deg,#0b1220_0%,#0a0f1a_100%)];
+}
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/15 shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-xl;
+}
+.glow-emerald { box-shadow: 0 0 40px rgba(16,185,129,0.25); }
+.glow-blue { box-shadow: 0 0 40px rgba(14,165,233,0.25); }
+.glow-amber { box-shadow: 0 0 40px rgba(245,158,11,0.25); }
+
+/* Stronger glass hover/active glow */
+.glass:hover { box-shadow: 0 0 50px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.08); }
+
+/* Feature card interactive glow */
+.feature-card::before {
+  content: ""; position: absolute; inset: -1px; border-radius: 0.75rem; pointer-events: none;
+  background: radial-gradient(200px 200px at var(--x, 50%) var(--y, 50%), color-mix(in oklab, var(--glow, #34D399) 60%, transparent), transparent 60%);
+  opacity: 0; transition: opacity .25s ease;
+}
+.feature-card:hover::before { opacity: 0.35; }
+.feature-card:active::before { opacity: 0.55; }
+
+/* Float hover for cards */
+.float-card { transition: transform .25s ease, box-shadow .25s ease; }
+.float-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+
+/* Light theme overrides */
+.light body { @apply text-slate-800; }
+.light .app-bg {
+  @apply bg-[radial-gradient(1000px_600px_at_-10%_-10%,#60A5FA_0%,transparent_60%),radial-gradient(800px_500px_at_110%_10%,#34D399_0%,transparent_55%),linear-gradient(180deg,#f8fafc_0%,#e5e7eb_100%)];
+}
+.light .glass { @apply bg-white/60 border-white/70; }
+
+/* Skeleton utilities */
+.skeleton { @apply animate-pulse bg-slate-700/30 rounded-md; }
+.light .skeleton { @apply bg-slate-300; }
+
+/* Subtle animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 300ms ease-out both; }
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(8px); transition: opacity .4s ease, transform .4s ease; }
+.reveal-visible { opacity: 1; transform: translateY(0); }
+
+/* Ripple click glow */
+.ripple-container { position: relative; }
+.ripple-container .ripple {
+  position: absolute; width: 12px; height: 12px; border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0) 70%);
+  transform: translate(-50%, -50%); pointer-events: none;
+  animation: ripple 600ms ease-out forwards;
+}
+@keyframes ripple {
+  from { opacity: .8; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(12); filter: blur(2px); }
+}
+
+/* Hero animated auras */
+.hero-aura { position: absolute; filter: blur(80px); opacity: 0.7; mix-blend-mode: screen; border-radius: 9999px; animation: floaty 10s ease-in-out infinite alternate; }
+.aura-emerald { background: radial-gradient(closest-side, rgba(16,185,129,0.35), transparent 70%); width: 380px; height: 280px; top: -40px; left: -30px; }
+.aura-blue { background: radial-gradient(closest-side, rgba(59,130,246,0.35), transparent 70%); width: 420px; height: 300px; bottom: -50px; right: -20px; animation-delay: 1s; }
+@keyframes floaty { from { transform: translateY(0) translateX(0) scale(1); } to { transform: translateY(12px) translateX(8px) scale(1.03); } }
+
+/* Particle field */
+.particles { position: absolute; inset: 0; overflow: hidden; }
+.particles span { position: absolute; width: 2px; height: 2px; background: rgba(255,255,255,0.35); border-radius: 9999px; animation: drift 12s linear infinite; left: calc(2% * var(--i)); top: calc(3% * var(--i)); }
+@keyframes drift { from { transform: translateY(0); opacity: .4; } 50% { opacity: .2; } to { transform: translateY(-20px); opacity: .4; } }
+
+/* Decorative bands between sections */
+.decor-band { height: 80px; border-radius: 1rem; position: relative; overflow: hidden; }
+.decor-band::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px 120px at 10% 50%, rgba(16,185,129,0.22), transparent 60%), radial-gradient(800px 120px at 90% 50%, rgba(59,130,246,0.22), transparent 60%); filter: blur(10px); }

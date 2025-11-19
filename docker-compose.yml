@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_DB: gaia
+      POSTGRES_USER: gaia_user
+      POSTGRES_PASSWORD: gaia_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gaia_user -d gaia"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://gaia_user:gaia_password@postgres:5432/gaia
+      - REDIS_URL=redis://redis:6379
+      - TF_FORCE_GPU_ALLOW_GROWTH=true
+      - TF_GPU_ALLOCATOR=cuda_malloc_async
+      - TF_ENABLE_ONEDNN_OPTS=0
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - GEMINI_MODEL=gemini-2.5-flash
+    env_file:
+      - ./backend/.env
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./data/temp_extract:/app/data/temp_extract
+      - ./data/butterflies:/app/data/butterflies:ro
+      - ./backend:/app
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: bash -c "while ! wget -qO- http://backend:8000/health >/dev/null 2>&1; do sleep 1; done && cd /app && celery -A app.tasks.ml_tasks worker --loglevel=info"
+    environment:
+      DATABASE_URL: postgresql://gaia_user:gaia_password@postgres:5432/gaia
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - ./data/butterflies:/app/data/butterflies:ro
+      - ./data/butterflies:/app/backend/data/butterflies:ro
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+      - SERVER_API_URL=http://backend:8000/api
+    depends_on:
+      backend:
+        condition: service_healthy
+    # Using default bridge network; published ports above expose the app at http://localhost:3000
+
+volumes:
+  postgres_data:
